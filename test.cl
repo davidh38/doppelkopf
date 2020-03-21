@@ -14,7 +14,7 @@
                     (get (first players_cards2) curr_player))
               )
                  )
-          [1 2 3];[(conj (second players_cards2) x)]
+          (conj (second players_cards2) x)
       ]
   )
   )
