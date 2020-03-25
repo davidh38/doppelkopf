@@ -1,41 +1,40 @@
 (defn play_card_inp []
   (eval (read-string (read-line)))
- )
+  )
 
-(defn who_won_trick [x]
-  2
- )
+(defn who_won_trick [trick]
+  (eval (read-string (read-line)) 
+        )
 
 (defn play_card [players_cards2, curr_player]
   (println curr_player)
   (println players_cards2)
   (println (second players_cards2))
   (let [played_card (play_card_inp)]
-      [
-           (assoc (first players_cards2) curr_player 
-                (into []  (remove #(= played_card %) 
-                    (get (first players_cards2) curr_player))
-                )
-             )
-          (conj (second players_cards2) played_card)
-      ]
-  )
+    [
+     (assoc (first players_cards2) curr_player 
+            (into []  (remove #(= played_card %) 
+                              (get (first players_cards2) curr_player))
+                  )
+            )
+     (conj (second players_cards2) played_card)
+     ]
+    )
   )
 (defn play_round [t myround]
- (let [round_players (first t)
-      players2 (second t)
-      mytricks []
- ]
- (println "in myround")
- (println t)
-; [(take 4 (cycle (keys players))) 
- (concat [round_players]
- (reduce play_card (conj round_players [players2 mytricks]))
- )
-;  []
-; ]
-)
- )
+  (let [round_players (first t)
+        players2 (second t)
+        mytricks []
+        ]
+    (println t)
+    ; [(take 4 (cycle (keys players))) 
+    (concat [round_players]
+            (reduce play_card (conj round_players [players2 mytricks]))
+            )
+    ;  []
+    ; ]
+    )
+  )
 
 (def tricks [])
 ; init cards
@@ -52,9 +51,8 @@
 (def round_players (take 4 (drop (who_won_trick tricks) (cycle (keys players)))))
 
 (reduce play_round 
-         (conj 
+        (conj 
           (range 10)
           [(take 2 (cycle (keys players))) players tricks]
-)
-         )
-
+          )
+        )
