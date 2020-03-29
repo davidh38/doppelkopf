@@ -7,34 +7,28 @@
         )
   )
 
-(defn play_card [players_cards2, curr_player]
+(defn play_card [game, curr_player]
   (println curr_player)
-  (println players_cards2)
-  (println (second players_cards2))
+  (println game)
   (let [played_card (play_card_inp)]
-    [
-     (assoc (first players_cards2) curr_player 
-            (into []  (remove #(= played_card %) 
-                              (get (first players_cards2) curr_player))
-                  )
-            )
-     (conj (second players_cards2) played_card)
-     ]
+    (assoc-in (assoc-in game 
+                        [:players curr_player :cards] 
+                        (remove #(= played_card %) 
+                                (get-in game [:players curr_player :cards])
+                                )
+                        )
+               [:current_trick] 
+              (conj (get-in game [:current_trick]) played_card)
+              )
     )
   )
 
-(defn play_round [t myround]
-  (let [round_players (first t)
-        players2 (second t)
-        mytricks []
-        ]
-    (println t)
-    ; [(take 4 (cycle (keys players))) 
-    (concat [round_players]
-            (reduce play_card (conj round_players [players2 mytricks]))
-            )
-    ;  []
-    ; ]
+(defn play_round [game round_count]
+  (println game)
+  (let [round_players [:p1 :p2 :p3 :p4]]      
+    (reduce play_card 
+            (assoc-in game [:current_trick] '()) 
+            round_players)
     )
   ) 
 
@@ -42,22 +36,22 @@
   (assoc game 
          :players 
          (assoc 
-            (get game :players)
-            (first players_cards)
-                (assoc (get (get game :players) (first players_cards))
-                        :cards   
-                        (second players_cards) 
-                )
-          )
-  )       
-)
+           (get game :players)
+           (first players_cards)
+           (assoc (get (get game :players) (first players_cards))
+                  :cards   
+                  (second players_cards) 
+                  )
+           )
+         )       
+  )
 
 (defn shuffle_and_share_cards [game]
   (reduce share_card_to_player game (map vector (keys (get game :players))
-                                    (partition 2 (shuffle (get game :cards)))
-                                    )
+                                         (partition 2 (shuffle (get game :cards)))
+                                         )
+          )
   )
-)
 
 (defn initialize []
   ; init cards
@@ -66,27 +60,26 @@
 
   ;(def round_players (take 4 (drop (who_won_trick tricks) (cycle (keys players)))))
   ; mix and share cards
-    {:players (zipmap players (repeat  {:cards () :tricks ()}))
-    :current_trick '()
-    :round_start_player :p1
-    :cards cards
-    }
+  {:players (zipmap players (repeat  {:cards () :tricks ()}))
+   :current_trick '()
+   :round_start_player :p1
+   :cards cards
+   }
   )
 
 
 (defn play_game []
-  (shuffle_and_share_cards (initialize))
   (reduce play_round 
           (conj 
-            (range 10)
-            [(take 2 (cycle (keys players))) players []]
+            (range 2)
+            (shuffle_and_share_cards (initialize))
             )
           )
   )
 
 (defn shuffle_and_share_cards [game]
   (reduce share_card_to_player game (map vector (keys (get game :players))
-                                      (partition 2 (shuffle (get game :cards))))
-))
+                                         (partition 2 (shuffle (get game :cards))))
+          ))
 
 
