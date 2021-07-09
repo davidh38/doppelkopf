@@ -1,6 +1,4 @@
-(defn play_card_inp []
-  (eval (read-string (read-line)))
-  )
+
 
 (defn who_won_trick [trick]
   (eval (read-string (read-line)) 
@@ -23,15 +21,6 @@
     )
   )
 
-(defn play_round [game round_count]
-  (println game)
-  (let [round_players [:p1 :p2 :p3 :p4]]      
-    (reduce play_card 
-            (assoc-in game [:current_trick] '()) 
-            round_players)
-    )
-  ) 
-
 (defn share_card_to_player [game players_cards]
   (assoc game 
          :players 
@@ -53,7 +42,7 @@
           )
   )
 
-(defn initialize []
+(defn initialize_cards_and_players []
   ; init cards
   (def cards '([0 :c], [1 :c],[2 :c], [3 :c], [0 :s], [1 :s], [2 :s], [3 :s]))
   (def players '(:p1 :p2 :p3 :p4))
@@ -68,18 +57,31 @@
   )
 
 
-(defn play_game []
-  (reduce play_round 
-          (conj 
-            (range 2)
-            (shuffle_and_share_cards (initialize))
-            )
-          )
-  )
-
 (defn shuffle_and_share_cards [game]
   (reduce share_card_to_player game (map vector (keys (get game :players))
                                          (partition 2 (shuffle (get game :cards))))
           ))
 
+(defn play_card_inp []
+  (eval (read-string (read-line)))
+  )
 
+(defn play_round [game round_count]
+  (println game)
+  (let [round_players [:p1 :p2 :p3 :p4]]
+    (reduce play_card
+            (assoc-in game [:current_trick] '())
+            round_players)
+    )
+  )
+
+
+(defn play_game []
+  (->> (initialize_cards_and_players)
+       (shuffle_and_share_cards)
+       (conj (range 2))
+       (reduce play_round)
+       )
+)
+
+(play_game)

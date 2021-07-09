@@ -1,3 +1,9 @@
-(println "hello world")
 
 
+
+
+(defn show_world []
+
+    (println "hello world")
+
+)
