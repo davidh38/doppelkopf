@@ -1,9 +1,8 @@
 
+(ns test2)
 
-
-
-(defn show_world []
-
+(defn showworld []
     (println "hello world")
-
 )
+
+
