@@ -18,4 +18,4 @@
    :current_trick ()
    :round_start_player :p1
    :cards cards
-   :round_count 2})
+   :round_count (/ (count cards) (count players))})
