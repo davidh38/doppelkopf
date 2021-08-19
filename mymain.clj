@@ -1,22 +1,22 @@
 (ns mymain
   (:require [myio]))
 
-(defn who_won_trick [trick]
+(defn who-won-trick [trick]
   (eval (read-string (read-line)))
   )
 
-(defn share_card_to_player [game players_cards]
+(defn share-card-to-player [game players-cards]
   (assoc game
          :players
          (assoc
           (get game :players)
-          (first players_cards)
-          (assoc (get (game :players) (first players_cards))
+          (first players-cards)
+          (assoc (get (game :players) (first players-cards))
                  :cards
-                 (second players_cards)))))
+                 (second players-cards)))))
 
-(defn shuffle_and_share_cards [game myshuffle]
-   (reduce share_card_to_player game
+(defn shuffle-and-share-cards [game myshuffle]
+   (reduce share-card-to-player game
            (map vector
                 (keys (get game :players))
                 (->>  (get game :cards)
@@ -26,37 +26,37 @@
 
 
 
-(defn play_card [game curr_player]
-  (println curr_player)
+(defn play-card [game curr-player]
+  (println curr-player)
   (println game)
-  (let [played_card (myio/play_card_inp)]
+  (let [played-card (myio/play-card-inp)]
     (->
-        (assoc-in game [:players curr_player :cards]
-                (remove #(= played_card %) (get-in game [:players curr_player :cards])))
+        (assoc-in game [:players curr-player :cards]
+                (remove #(= played-card %) (get-in game [:players curr-player :cards])))
 
-        (assoc-in [:current_trick]
-                (conj (game [:current_trick]) played_card))))
+        (assoc-in [:current-trick]
+                (conj (game [:current-trick]) played-card))))
     )
 
-(defn play_round [game round]
-    (reduce play_card (assoc-in game [:current_trick] '()) [:p1 :p2 :p3 :p4])
+(defn play-round [game round]
+    (reduce play-card (assoc-in game [:current-trick] '()) [:p1 :p2 :p3 :p4])
 )
 
-(defn play_rounds [game]
-   (reduce play_round game (range (get game :round_count)))
+(defn play-rounds [game]
+   (reduce play-round game (range (get game :round-count)))
 )
 
-(defn play_game []
+(defn play-game []
   (->
-   (myio/initialize_cards_and_players)
-   (shuffle_and_share_cards myio/myshuffle)
+   (myio/initialize-cards-and-players)
+   (shuffle-and-share-cards myio/myshuffle)
    ;(announce)
-   (play_rounds)
+   (play-rounds)
   )
 )
 
-(play_game)
+(play-game)
 
 ;Try cloning this template project and look at how the files are laid out and how the ns form works: github.com/io-tupelo/clj-template – Alan Thompson 59 mins ago
-;play_caerd
-;play_rounds (play_round (play_card))
+;play-caerd
+;play-rounds (play-round (play-card))
