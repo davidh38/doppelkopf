@@ -21,7 +21,8 @@
                 (keys (get game :players))
                 (->>  (get game :cards)
                       (myshuffle)
-                      (partition 2)))
+                      (partition (/ (count (get game :cards))
+                                    (count (get game :players))))))
            ))
 
 
@@ -56,6 +57,7 @@
 )
 
 (play-game)
+
 
 ;Try cloning this template project and look at how the files are laid out and how the ns form works: github.com/io-tupelo/clj-template – Alan Thompson 59 mins ago
 ;play-caerd
