@@ -47,7 +47,7 @@
          (announce))
 
         play-round
-        (reduce play-card (assoc-in game-init [:current-trick] '()) [:p1 :p2 :p3 :p4])]
+        (fn [game-init round-count] (reduce play-card (assoc-in game-init [:current-trick] '()) [:p1 :p2 :p3 :p4]))]
 
     (reduce play-round game-init (range (get game-init :round-count)))))
 
