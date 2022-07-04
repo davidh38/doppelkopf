@@ -1,6 +1,5 @@
-(ns mymain
-  (:require [myio :as io]))
-
+(ns core
+  (:require [io]))
 
 (defn initialize-cards-and-players []
                                         ; init cards
@@ -21,51 +20,45 @@
   (eval (read-string (read-line))))
 
 (defn share-card-to-player [game players-cards]
-  (assoc game
-         :players
-         (assoc
-          (get game :players)
-          (first players-cards)
-          (assoc (get (game :players) (first players-cards))
-                 :cards
-                 (second players-cards)))))
+  (assoc-in game [:players (first players-cards) :cards ]
+            (second players-cards)))
 
 (defn shuffle-and-share-cards [io-shuffle game]
-  (reduce share-card-to-player game
-          (map vector
-               (keys (game :players))
-               (->>  (game :cards)
-                     (io-shuffle)
-                     (partition (/ (count (game :cards))
-                                   (count (game :players))))))))
+(reduce share-card-to-player game
+        (map vector
+             (keys (game :players))
+             (->>  (game :cards)
+                   (io-shuffle)
+                   (partition (/ (count (game :cards))
+                                 (count (game :players))))))))
 
 (defn announce [game]
-  game)
+game)
 
 (defn play-card [io-play-card-inp game curr-player]
-  (println curr-player)
-  (println game)
+(println curr-player)
+(println game)
 
-  (let [played-card (io-play-card-inp)]
-    (->
-     (assoc-in game [:players curr-player :cards]
-               (remove #(= played-card %) (get-in game [:players curr-player :cards])))
+(let [played-card (io-play-card-inp)]
+  (->
+   (assoc-in game [:players curr-player :cards]
+             (remove #(= played-card %) (get-in game [:players curr-player :cards])))
 
-     (assoc-in [:current-trick]
-               (conj (game [:current-trick]) played-card)))))
+   (assoc-in [:current-trick]
+             (conj (game [:current-trick]) played-card)))))
 
 (defn play-game-reduce [io-play-card-inp io-shuffle]
 
-  (let [game-init
-        (->>
-         (initialize-cards-and-players)
-         (shuffle-and-share-cards io-shuffle)
-         (announce))
+(let [game-init
+      (->>
+       (initialize-cards-and-players)
+       (shuffle-and-share-cards io-shuffle)
+       (announce))
 
-        play-round
-        (fn [game-init round-count] (reduce (partial play-card io-play-card-inp) (assoc-in game-init [:current-trick] '()) [:p1 :p2 :p3 :p4]))]
+      play-round
+      (fn [game-init round-count] (reduce (partial play-card io-play-card-inp) (assoc-in game-init [:current-trick] '()) [:p1 :p2 :p3 :p4]))]
 
-    (reduce play-round game-init (range (get game-init :round-count)))))
+  (reduce play-round game-init (range (get game-init :round-count)))))
 
                                         ;(defn play-game []
                                         ;

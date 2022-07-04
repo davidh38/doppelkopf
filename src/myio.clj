@@ -1,4 +1,4 @@
-(ns myio)
+(ns io)
 
 (defn play-card-inp []
   (eval (read-string (read-line))))
