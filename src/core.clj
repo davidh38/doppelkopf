@@ -19,33 +19,33 @@
 (defn who-won-trick [trick]
   (eval (read-string (read-line))))
 
-(defn share-card-to-player [game players-cards]
-  (assoc-in game [:players (first players-cards) :cards ]
-            (second players-cards)))
+(defn share-card-to-player [game [player cards]]
+  (assoc-in game [:players player :cards ]
+            cards))
 
-(defn shuffle-and-share-cards [io-shuffle game]
-(reduce share-card-to-player game
-        (map vector
-             (keys (game :players))
-             (->>  (game :cards)
-                   (io-shuffle)
-                   (partition (/ (count (game :cards))
-                                 (count (game :players))))))))
+(defn shuffle-and-share-cards [io-shuffle {players :players cards :cards :as game}]
+  (reduce share-card-to-player game
+          (map vector
+               (keys players)
+               (->>  cards
+                     (io-shuffle)
+                     (partition (/ (count cards)
+                                   (count players)))))))
 
 (defn announce [game]
-game)
+  game)
 
 (defn play-card [io-play-card-inp game curr-player]
-(println curr-player)
-(println game)
+  (println curr-player)
+  (println game)
 
-(let [played-card (io-play-card-inp)]
-  (->
-   (assoc-in game [:players curr-player :cards]
-             (remove #(= played-card %) (get-in game [:players curr-player :cards])))
+  (let [played-card (io-play-card-inp)]
+    (->
+     (assoc-in game [:players curr-player :cards]
+               (remove #(= played-card %) (get-in game [:players curr-player :cards])))
 
-   (assoc-in [:current-trick]
-             (conj (game [:current-trick]) played-card)))))
+     (update :current-trick conj played-card))))
+
 
 (defn play-game-reduce [io-play-card-inp io-shuffle]
 
