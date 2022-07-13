@@ -1,20 +1,21 @@
 (ns core
   (:require [io]))
 
-(defn initialize-cards-and-players []
+(defn initialize-game [deck]
                                         ; init cards
-  (def cards '([0 :c], [1 :c],[2 :c], [3 :c], [0 :s], [1 :s], [2 :s], [3 :s]))
-  (def players '(:p1 :p2 :p3 :p4))
+  (let [players '(:p1 :p2 :p3 :p4)]
 
                                         ;(def round-players (take 4 (drop (who-won_trick tricks) (cycle (keys players)))))
                                         ; mix and share cards
-  {:players (zipmap players (repeat  {:cards () :tricks ()}))
-   :current-trick ()
-   :round-start-player :p1
-   :cards cards
-   :round-count (/ (count cards) (count players))
-   :mode ""
-   })
+    {:players (zipmap players (repeat  {:cards () :tricks ()}))
+     :current-trick ()
+     :round-start-player :p1
+     :cards deck
+     :round-count (/ (count deck) (count players))
+     :mode ""
+     }
+    )
+  )
 
 (defn who-won-trick [trick]
   (eval (read-string (read-line))))
@@ -46,20 +47,28 @@
 
      (update :current-trick conj played-card))))
 
+(defn new-deck []
+
+  '([0 :c], [1 :c],[2 :c], [3 :c], [0 :s], [1 :s], [2 :s], [3 :s])
+
+  )
+
 
 (defn play-game-reduce [io-play-card-inp io-shuffle]
 
   (let [game-init
         (->>
-         (initialize-cards-and-players)
+         (new-deck)
+         (initialize-game)
+                                        ; (initialize players)
          (shuffle-and-share-cards io-shuffle)
          (announce))
 
-        play-round
+        turns
         (fn [game-init round-count]
           (reduce (partial play-card io-play-card-inp) (assoc game-init :current-trick '()) [:p1 :p2 :p3 :p4]))]
 
-    (reduce play-round game-init (range (game-init :round-count)))))
+    (reduce turns game-init (range (game-init :round-count)))))
 
 
 
