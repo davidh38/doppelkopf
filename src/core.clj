@@ -49,16 +49,20 @@
 
 (defn play-game-reduce [io-play-card-inp io-shuffle]
 
-(let [game-init
-      (->>
-       (initialize-cards-and-players)
-       (shuffle-and-share-cards io-shuffle)
-       (announce))
+  (let [game-init
+        (->>
+         (initialize-cards-and-players)
+         (shuffle-and-share-cards io-shuffle)
+         (announce))
 
-      play-round
-      (fn [game-init round-count] (reduce (partial play-card io-play-card-inp) (assoc-in game-init [:current-trick] '()) [:p1 :p2 :p3 :p4]))]
+        play-round
+        (fn [game-init round-count]
+          (reduce (partial play-card io-play-card-inp) (assoc game-init :current-trick '()) [:p1 :p2 :p3 :p4]))]
 
-  (reduce play-round game-init (range (get game-init :round-count)))))
+    (reduce play-round game-init (range (game-init :round-count)))))
+
+
+
 
                                         ;(defn play-game []
                                         ;
