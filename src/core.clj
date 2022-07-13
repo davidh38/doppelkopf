@@ -24,12 +24,11 @@
   (assoc-in game [:players player :cards ]
             cards))
 
-(defn shuffle-and-share-cards [io-shuffle {players :players cards :cards :as game}]
+(defn share-cards [{players :players cards :cards :as game}]
   (reduce share-card-to-player game
           (map vector
                (keys players)
                (->>  cards
-                     (io-shuffle)
                      (partition (/ (count cards)
                                    (count players)))))))
 
@@ -54,14 +53,14 @@
   )
 
 
-(defn play-game-reduce [io-play-card-inp io-shuffle]
+(defn play-game-reduce [io-play-card-inp io-shuffle-deck]
 
   (let [game-init
         (->>
          (new-deck)
+         (io-shuffle-deck)
          (initialize-game)
-                                        ; (initialize players)
-         (shuffle-and-share-cards io-shuffle)
+         (share-cards)
          (announce))
 
         turns
