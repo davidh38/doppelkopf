@@ -55,21 +55,21 @@
 
 (defn play-game-reduce [io-play-card-inp io-shuffle-deck]
 
-  (let [game-init
-        (->>
-         (new-deck)
-         (io-shuffle-deck)
-         (initialize-game)
-         (share-cards)
-         (announce))
+  (->>
+   (new-deck)
+   (io-shuffle-deck)
+   (initialize-game)
+   (share-cards)
+   (announce)
+   ((fn play-game[game-init]
+      (reduce
+       (fn play-turn[game round-count]
+         (reduce
+          (partial play-card io-play-card-inp) (assoc game :current-trick '()) [:p1 :p2 :p3 :p4]))
+       game-init (range (game-init :round-count)))))
+   )
 
-        turns
-        (fn [game-init round-count]
-          (reduce (partial play-card io-play-card-inp) (assoc game-init :current-trick '()) [:p1 :p2 :p3 :p4]))]
-
-    (reduce turns game-init (range (game-init :round-count)))))
-
-
+  )
 
 
                                         ;(defn play-game []
