@@ -1,6 +1,9 @@
 (ns core
   (:require [io]))
 
+(defn ja [] "ja")
+
+
 (defn initialize-game [deck]
                                         ; init cards
   (let [players '(:p1 :p2 :p3 :p4)]
@@ -17,14 +20,32 @@
     )
   )
 
-(defn who-won-trick [trick]
-  (eval (read-string (read-line))))
+
+(defn is-trump? [card]
+
+  (contains? card  (into  (map vector (into (repeat 4 10) (repeat 4 11)) (cycle [:c :s :h :d]))
+                          [[10 :h] [9 :d] [14 :d] [15 :d]])  )
+
+  )
+
+
+(defn who-won-trick [{current-trick :current-trick :as game} ]
+                                        ;  (assoc game :players '())
+                                        ;(assoc game :round-count 2)
+
+  game
+  )
+
+
+(defn assign-trick-to-players [game]
+  game
+  )
 
 (defn share-card-to-player [game [player cards]]
   (assoc-in game [:players player :cards ]
             cards))
 
-(defn share-cards [{players :players cards :cards :as game}]
+(defn share-cards-to-players [{players :players cards :cards :as game}]
   (reduce share-card-to-player game
           (map vector
                (keys players)
@@ -33,6 +54,7 @@
                                    (count players)))))))
 
 (defn announce [game]
+
   game)
 
 (defn play-card [io-play-card-inp game curr-player]
@@ -44,30 +66,39 @@
      (assoc-in game [:players curr-player :cards]
                (remove #(= played-card %) (get-in game [:players curr-player :cards])))
 
-     (update :current-trick conj played-card))))
+     (update :current-trick conj {curr-player played-card}))))
 
-(defn new-deck []
+(defn create-deck []
 
-  '([0 :c], [1 :c],[2 :c], [3 :c], [0 :s], [1 :s], [2 :s], [3 :s])
+  [[9 :s], [9 :c],[10 :c], [11 :c], [10 :s], [11 :s], [12 :s], [13 :s], [10 :s], [12 :s], [11 :s], [13 :s]]
+                                        ;create full deck
+
+                                        ; real deck
+                                        ;(map vector (take 40 (cycle (range 9 16) )) (cycle [:h :d :s :d]))
 
   )
 
 
 (defn play-game-reduce [io-play-card-inp io-shuffle-deck]
 
-  (->>
-   (new-deck)
-   (io-shuffle-deck)
-   (initialize-game)
-   (share-cards)
-   (announce)
-   ((fn play-game[game-init]
-      (reduce
-       (fn play-turn[game round-count]
-         (reduce
-          (partial play-card io-play-card-inp) (assoc game :current-trick '()) [:p1 :p2 :p3 :p4]))
-       game-init (range (game-init :round-count)))))
-   )
+(->>
+(create-deck)
+(io-shuffle-deck)
+(initialize-game)
+(share-cards-to-players)
+(announce)
+((fn play-game[game-init]
+   (reduce
+    (fn play-turn[game round-count]
+      (->>
+       (reduce
+        (partial play-card io-play-card-inp) (assoc game :current-trick {}) [:p1 :p2 :p3 :p4])
+       (who-won-trick)
+       (assign-trick-to-players)
+       )
+      )
+    game-init (range (game-init :round-count)))))
+)
 
   )
 
@@ -91,5 +122,6 @@
                                         ;        (if (> round 10)
                                         ;          game-next
                                         ;          (recur (inc round) game-next))))))
+
 
 (play-game-reduce io/play-card-inp io/myshuffle)
