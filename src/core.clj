@@ -78,27 +78,30 @@
 
   )
 
+(defn trick-player-order [player]
+  (take 4 (drop-while #(not= % player) [:p1 :p2 :p3 :p4 :p1 :p2 :p3 :p4]))
+  )
 
 (defn play-game-reduce [io-play-card-inp io-shuffle-deck]
 
-(->>
-(create-deck)
-(io-shuffle-deck)
-(initialize-game)
-(share-cards-to-players)
-(announce)
-((fn play-game[game-init]
-   (reduce
-    (fn play-turn[game round-count]
-      (->>
-       (reduce
-        (partial play-card io-play-card-inp) (assoc game :current-trick {}) [:p1 :p2 :p3 :p4])
-       (who-won-trick)
-       (assign-trick-to-players)
-       )
-      )
-    game-init (range (game-init :round-count)))))
-)
+  (->>
+   (create-deck)
+   (io-shuffle-deck)
+   (initialize-game)
+   (share-cards-to-players)
+   (announce)
+   ((fn play-game[game-init]
+      (reduce
+       (fn play-turn[game round-count]
+         (->>
+          (reduce
+           (partial play-card io-play-card-inp) (assoc game :current-trick {}) (trick-player-order (game :round-start-player)))
+          (who-won-trick)
+          (assign-trick-to-players)
+          )
+         )
+       game-init (range (game-init :round-count)))))
+   )
 
   )
 
