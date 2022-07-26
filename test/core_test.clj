@@ -4,13 +4,16 @@
             )
   )
 
-(deftest aoeu []
+(deftest aoeu1 []
   (is (= (ja) "ja") )
   )
 
-(deftest who-won-trick []
-  (is (= :p1 ))
+(deftest aoeu2 []
+  (is (= (ja) "ja2") )
+  )
 
+(deftest aoeu3 []
+  (is (= (ja) "ja") )
   )
 
 
