@@ -29,9 +29,14 @@
   )
 
 
+
 (defn who-won-trick [{current-trick :current-trick :as game} ]
                                         ;  (assoc game :players '())
                                         ;(assoc game :round-count 2)
+                                        ; first served color
+                                        ; anly the highest of the first person counts
+                                        ; what is the highest trump
+
 
   game
   )
@@ -59,7 +64,7 @@
 
 (defn play-card [io-play-card-inp game curr-player]
   (println curr-player)
-  (println game)
+  (clojure.pprint/pprint game)
 
   (let [played-card (io-play-card-inp)]
     (->
@@ -127,4 +132,22 @@
                                         ;          (recur (inc round) game-next))))))
 
 
-(play-game-reduce io/play-card-inp io/myshuffle)
+                                        ;(play-game-reduce io/play-card-inp io/myshuffle)
+
+
+
+
+(println "---------------------------------------------")
+(println "---------------------------------------------")
+(println "---------------------------------------------")
+(println "---------------------------------------------")
+(println "---------------------------------------------")
+(println "---------------------------------------------")
+
+(let [values (atom [[13 :s] [12 :s] [11 :s] [12 :s] [13 :s] [12 :s] [11 :s] [12 :s] [13 :s] [12 :s] [11 :s] [12 :s]])]
+  (defn my-function2 []
+    (let [e (first @values)]
+      (swap! values rest)
+      e)))
+
+(play-game-reduce my-function2 identity)

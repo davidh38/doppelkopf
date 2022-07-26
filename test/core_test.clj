@@ -1,18 +1,18 @@
 (ns core-test
-  (:require [clojure.test :as test]
+  (:require [clojure.test :refer :all]
             [core :refer :all]
-            [hi :refer :all]
             )
   )
 
-(test/deftest addition
-  (test/is (= "ja" (core/ja)))
-  (test/is (= 5 (+ 2 3)) "addition")
-  (test/is (= 4 (+ 3 1))))
+(deftest aoeu []
+  (is (= (ja) "ja") )
+  )
 
-(test/deftest aoeuaddition2
-  (test/is (= 6 (+ 2 3)) "addition")
-  (test/is (= 4 (+ 3 1))))
+(deftest who-won-trick []
+  (is (= :p1 ))
+
+  )
+
 
                                         ;cider-run-project-test
 
