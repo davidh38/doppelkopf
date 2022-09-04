@@ -122,7 +122,7 @@
 
                                         ;(play-game-reduce io/play-card-inp io/myshuffle)
 
-(print (apply str (take 10 (repeat "#"))))
+(println (apply str (take 10 (repeat "#"))))
 ;;,[10 :c], [11 :c], [10 :s], [11 :s], [12 :s], [13 :s], [10 :s], [12 :s], [11 :s], [13 :s]
 (let [values (atom [[9 :s], [9 :c],[10 :s], [11 :s]])]
   (defn test-function []
@@ -131,3 +131,5 @@
       e)))
 
 (play-game-reduce test-function identity)
+
+;(println (test-function))

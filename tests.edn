@@ -1,0 +1,4 @@
+#kaocha/v1 {:watch? false
+            :skip-meta :slow
+            :fail-fast? false
+            }
